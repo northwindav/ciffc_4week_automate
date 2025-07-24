@@ -126,7 +126,7 @@ function getMonday {
     return $targetMonday.ToString("MMMM dd")
 }
 
-function getFriday {
+function getSunday{
     param (
         [int]$weeksAhead = 1
     )
@@ -136,26 +136,26 @@ function getFriday {
     }
      
      $today = Get-Date
-     $targetDate = [DayofWeek]::Friday
-     $daysUntilFriday = ([int]$targetDay - [int]$today.DayofWeek + 7) % 7
-     if ($daysUntilFriday -eq 0) { $daysUntilFriday = 7}
-     $thisFriday = $today.AddDays($daysUntilFriday)
-     $targetFriday = $thisFriday.AddDays(7 *($weeksAhead - 1))
+     $targetDay = [DayofWeek]::Sunday
+     $daysUntilSunday = ([int]$targetDay - [int]$today.DayofWeek + 7) % 7
+     if ($daysUntilSunday -eq 0) { $daysUntilSunday = 7}
+     $thisSunday = $today.AddDays($daysUntilSunday)
+     $targetSunday= $thisSunday.AddDays(7 *($weeksAhead - 1))
 
-    return $targetFriday.ToString("MMMM dd")
+    return $targetSunday.ToString("MMMM dd")
 }
 
 # ---- End of functions -----
 
 # --- Insert the title info -----
 Add-Heading -text "$(getToday), Week 2/3/4 Significant Fire Weather Outlook"  -font "Arial" -size 18 -center $true -bold $true
-Add-Heading -text "Week 2: $(getMonday -weeksahead 1) - $(getFriday -weeksAhead 2)" -font "Arial" -size 14 -center $true
-Add-Heading -text "Week 3: $(getMonday -weeksahead 2) - $(getFriday -weeksAhead 3)" -font "Arial" -size 14 -center $true
-Add-Heading -text "Week 4: $(getMonday -weeksahead 3) - $(getFriday -weeksAhead 4)" -font "Arial" -size 14 -center $true
+Add-Heading -text "Week 2: $(getMonday -weeksahead 1) - $(getSunday-weeksAhead 2)" -font "Arial" -size 14 -center $true
+Add-Heading -text "Week 3: $(getMonday -weeksahead 2) - $(getSunday-weeksAhead 3)" -font "Arial" -size 14 -center $true
+Add-Heading -text "Week 4: $(getMonday -weeksahead 3) - $(getSunday-weeksAhead 4)" -font "Arial" -size 14 -center $true
 
 
 # ----- Week 2 headings, tables and images -----------
-Add-Heading -text "Week 2: $(getMonday -weeksahead 1) - $(getFriday -weeksAhead 2): " -font "Arial" -size 14 -center $false -bold $true
+Add-Heading -text "Week 2: $(getMonday -weeksahead 1) - $(getSunday-weeksAhead 2): " -font "Arial" -size 14 -center $false -bold $true
 $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
