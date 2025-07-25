@@ -62,14 +62,17 @@ function Add-Table {
         $cellObj = $table.Cell($r, $c)
         $cellObj.Range.Text = $cellContents[$cell]
         $cellObj.Range.ParagraphFormat.Alignment = 1 # wdAlignParagraphCenter
+        # Set text color if specified
         if ($cellColors.ContainsKey($cell)) {
             $cellObj.Range.Font.Color = $cellColors[$cell]
         }
+        # Set background to light grey (RGB 242,242,242)
+        $cellObj.Shading.BackgroundPatternColor = 12632256
     }
     if ($caption -ne "") {
         $table.Range.InsertCaption("Table", ". ${caption}", 0, 0)
     }
-    $table.Rows.Add() | Out-Null
+    #$table.Rows.Add() | Out-Null
     $range.InsertParagraphAfter()
 }
 
@@ -126,7 +129,7 @@ function getMonday {
     return $targetMonday.ToString("MMMM dd")
 }
 
-function getSunday{
+function getSunday {
     param (
         [int]$weeksAhead = 1
     )
@@ -149,27 +152,27 @@ function getSunday{
 
 # --- Insert the title info -----
 Add-Heading -text "$(getToday), Week 2/3/4 Significant Fire Weather Outlook"  -font "Arial" -size 18 -center $true -bold $true
-Add-Heading -text "Week 2: $(getMonday -weeksahead 1) - $(getSunday-weeksAhead 2)" -font "Arial" -size 14 -center $true
-Add-Heading -text "Week 3: $(getMonday -weeksahead 2) - $(getSunday-weeksAhead 3)" -font "Arial" -size 14 -center $true
-Add-Heading -text "Week 4: $(getMonday -weeksahead 3) - $(getSunday-weeksAhead 4)" -font "Arial" -size 14 -center $true
+Add-Heading -text "Week 2: $(getMonday -weeksahead 1) - $(getSunday -weeksAhead 2)" -font "Arial" -size 14 -center $true
+Add-Heading -text "Week 3: $(getMonday -weeksahead 2) - $(getSunday -weeksAhead 3)" -font "Arial" -size 14 -center $true
+Add-Heading -text "Week 4: $(getMonday -weeksahead 3) - $(getSunday -weeksAhead 4)" -font "Arial" -size 14 -center $true
 
 
 # ----- Week 2 headings, tables and images -----------
-Add-Heading -text "Week 2: $(getMonday -weeksahead 1) - $(getSunday-weeksAhead 2): " -font "Arial" -size 14 -center $false -bold $true
 $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
+Add-Heading -text "Week 2: $(getMonday -weeksahead 1) - $(getSunday -weeksAhead 2): " -font "Arial" -size 11 -center $false -bold $true
 Add-Heading -text "<placeholder text here>" -font "Arial" -size 11 -center $false -bold $false
 $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
 
-#Add-Image -url "https://www.tropicaltidbits.com/analysis/models/cfs-avg/2025072212/cfs-avg_z500aMean_namer_1.png" -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
+Add-Image -url "https://www.tropicaltidbits.com/analysis/models/cfs-avg/2025072212/cfs-avg_z500aMean_namer_1.png" -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
 
 Add-Table -rows 10 -cols 3 -caption "Week 2 risk summary" -cellContents @{
-    "1,1" = "Little or no activity"
-    "1,2" = "Placeholder text here"
-    "1,3" = "Other placeholder text here"
+    "1,1" = "Geographic area"
+    "1,2" = "Precipitation"
+    "1,3" = "Temperature"
     "2,1" = "BC"
     "3,1" = "YT"
     "4,1" = "NWT"
@@ -180,17 +183,78 @@ Add-Table -rows 10 -cols 3 -caption "Week 2 risk summary" -cellContents @{
     "9,1" = "PQ"
     "10,1" = "ATL"
 }  -cellColors @{
-    "1,1" = 0x00FF00 # Green
-    "1,2" = 0xFFFF00 # Yellow
+    "1,2" = 0xFFA500 # Orange
     "1,3" = 255 # Red
-  <#   "4,1" = 0xFFA500 # Orange
-    "5,1" = 0x0000FF # Blue
-    "6,1" = 0x800080 # Purple
-    "7,1" = 0xFFC0CB # Pink
-    "8,1" = 0xA52A2A # Brown
-    "9,1" = 0x808080 # Gray
-    "10,1" = 0xFFFFFF # White #>
 }
+
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+
+#Add-Image -url "https://www.tropicaltidbits.com/analysis/models/cfs-avg/2025072212/cfs-avg_z500aMean_namer_1.png" -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
+
+# ----- Week 3 headings, tables and images -----------
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+Add-Heading -text "Week 3: $(getMonday -weeksahead 2) - $(getSunday -weeksAhead 3): " -font "Arial" -size 11 -center $false -bold $true
+Add-Heading -text "<placeholder text here>" -font "Arial" -size 11 -center $false -bold $false
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+
+Add-Table -rows 10 -cols 3 -caption "Week 3 risk summary" -cellContents @{
+    "1,1" = "Geographic area"
+    "1,2" = "Precipitation"
+    "1,3" = "Temperature"
+    "2,1" = "BC"
+    "3,1" = "YT"
+    "4,1" = "NWT"
+    "5,1" = "AB"
+    "6,1" = "SK"
+    "7,1" = "MB"
+    "8,1" = "ON"
+    "9,1" = "PQ"
+    "10,1" = "ATL"
+}  -cellColors @{
+    "1,2" = 0xFFA500 # Orange
+    "1,3" = 255 # Red
+}
+
+# ----- Week 4 headings, tables and images -----------
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+Add-Heading -text "Week 4: $(getMonday -weeksahead 3) - $(getSunday -weeksAhead 4): " -font "Arial" -size 11 -center $false -bold $true
+Add-Heading -text "<placeholder text here>" -font "Arial" -size 11 -center $false -bold $false
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+
+Add-Table -rows 10 -cols 3 -caption "Week 4 risk summary" -cellContents @{
+    "1,1" = "Geographic area"
+    "1,2" = "Precipitation"
+    "1,3" = "Temperature"
+    "2,1" = "BC"
+    "3,1" = "YT"
+    "4,1" = "NWT"
+    "5,1" = "AB"
+    "6,1" = "SK"
+    "7,1" = "MB"
+    "8,1" = "ON"
+    "9,1" = "PQ"
+    "10,1" = "ATL"
+}  -cellColors @{
+    "1,2" = 0xFFA500 # Orange
+    "1,3" = 255 # Red
+}
+# -----Summary text for all 3 weeks -----------
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+Add-Heading -text "Week 2-4 Summary: $(getMonday -weeksahead 1) - $(getSunday -weeksAhead 4): " -font "Arial" -size 11 -center $false -bold $true
+Add-Heading -text "<placeholder text here>" -font "Arial" -size 11 -center $false -bold $false
+
 
 $word.SaveAs([ref]$docPath)
 <# $word.Close()
