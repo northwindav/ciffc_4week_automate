@@ -5,6 +5,10 @@
 # Usage:
 #
 
+# To do:
+# 1. Add a caption to the image function, and insert proper captions
+# 2. Add the remaining commonly used images.
+
 # Create COM object
 $docx = New-Object -ComObject Word.Application
 $docx.visible = $true # For testing. Set to $false for production
@@ -148,6 +152,28 @@ function getSunday {
     return $targetSunday.ToString("MMMM dd")
 }
 
+# Create the base URL for TT CFSv2 images:
+# The images have the pattern: https://www.tropicaltidbits.com/analysis/models/cfs-avg/<YYYYMMDDHH>/cfs-avg_z500aMean_namer_<1|2|3|4>.png where <YYYYMMDDHH> is the initialization time
+# and <1|2|3|4} is the week. For consistency we'll use the Monday 12z run so that images roughly line up with the M-S forecast week.
+function ttURL {
+    param (
+        [int]$week = 2
+    )
+
+    if ($week -lt 1 -or $week -gt 4) {
+        throw "Week must be between 1 and 4"
+    }
+
+    # Find the Monday of the current week
+    $today = Get-Date
+    $daysSinceMonday = ([int]$today.DayOfWeek - [int][System.DayOfWeek]::Monday + 7) % 7
+    $monday = $today.AddDays(-$daysSinceMonday)
+    # Use 12Z (12:00 UTC) as the initialization hour
+    $dateStr = $monday.ToString("yyyyMMdd") + "12"
+    $baseUrl = "https://www.tropicaltidbits.com/analysis/models/cfs-avg/$dateStr/cfs-avg_z500aMean_namer_${week}.png"
+    return $baseUrl
+}
+
 # ---- End of functions -----
 
 # --- Insert the title info -----
@@ -167,7 +193,9 @@ $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
 
-Add-Image -url "https://www.tropicaltidbits.com/analysis/models/cfs-avg/2025072212/cfs-avg_z500aMean_namer_1.png" -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
+
+$ttWeek2 = ttURL -week 2
+Add-Image -url $ttWeek2 -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
 
 Add-Table -rows 10 -cols 3 -caption "Week 2 risk summary" -cellContents @{
     "1,1" = "Geographic area"
@@ -191,8 +219,6 @@ $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
 
-#Add-Image -url "https://www.tropicaltidbits.com/analysis/models/cfs-avg/2025072212/cfs-avg_z500aMean_namer_1.png" -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
-
 # ----- Week 3 headings, tables and images -----------
 $range = $word.Content
 $range.Collapse(0)
@@ -202,6 +228,9 @@ Add-Heading -text "<placeholder text here>" -font "Arial" -size 11 -center $fals
 $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
+
+$ttWeek3 = ttURL -week 3
+Add-Image -url $ttWeek3 -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
 
 Add-Table -rows 10 -cols 3 -caption "Week 3 risk summary" -cellContents @{
     "1,1" = "Geographic area"
@@ -230,6 +259,9 @@ Add-Heading -text "<placeholder text here>" -font "Arial" -size 11 -center $fals
 $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
+
+$ttWeek4 = ttURL -week 4
+Add-Image -url $ttWeek4 -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
 
 Add-Table -rows 10 -cols 3 -caption "Week 4 risk summary" -cellContents @{
     "1,1" = "Geographic area"
