@@ -6,8 +6,9 @@
 #
 
 # To do:
-# 1. Add a caption to the image function, and insert proper captions
+# 1. Add a caption to the image function, and insert proper captions including source URL
 # 2. Add the remaining commonly used images.
+# 3. Add a disclamer at the end of the document including intended audience, issue frequency and limitations.
 
 # Create COM object
 $docx = New-Object -ComObject Word.Application
@@ -287,6 +288,13 @@ $range.InsertParagraphAfter()
 Add-Heading -text "Week 2-4 Summary: $(getMonday -weeksahead 1) - $(getSunday -weeksAhead 4): " -font "Arial" -size 11 -center $false -bold $true
 Add-Heading -text "<placeholder text here>" -font "Arial" -size 11 -center $false -bold $false
 
+
+# disclaimer
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+Add-Heading -text "Disclaimer: " -font "Arial" -size 11 -center $false -bold $true
+Add-Heading -text "This document is intended for internal use by CIFFC and its partners. This outlook is updated once per week and amendments are not issued. It provides a high-level outlook of significant fire weather conditions for the next 2-4 weeks based on the latest forecast model data. The information is subject to change as new data becomes available and should not be used for operational decision-making. The focus of this outlook is on meteorological conditions pertinent to wildfire behavior, and other potentially high-impact weather is not considered or included." -font "Arial" -size 11 -center $false -bold $false
 
 $word.SaveAs([ref]$docPath)
 <# $word.Close()
