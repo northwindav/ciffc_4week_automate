@@ -3,23 +3,40 @@
 # Smith july 2025
 
 # Usage:
-#
+# 1. A VPN connection is required to grab Lin's images. There's a helpful popup dialog box to remind you, and it can be commented out if you find it annoying.
+# 2. Save this script locally and run it. No admin permissions are required.
+# 3. The script will create a Word document in your Documents folder with the name CIFFC_SPU_<date>_WK234.docx
+# 4. It's possible to have most of this run the in background, but you'll still need to add a classification before it's saved.
 
 # To do:
 # 1. Add a caption to the image function, and insert proper captions including source URL
 # 2. Add the remaining commonly used images.
 # 3. Add a disclamer at the end of the document including intended audience, issue frequency and limitations.
 
+
+# Show dialog box for VPN requirement. Add a block comment if you find this annoying.
+[void][System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+[System.Windows.Forms.MessageBox]::Show("This script requires an active connection to the VPN to download images. Click OK to continue.", "VPN Required", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+
 # Create COM object
 $docx = New-Object -ComObject Word.Application
-$docx.visible = $true # For testing. Set to $false for production
+$docx.visible = $true # Set to $false if you don't want to see the word window, though you'll still have to add a classification before it's saved.
+
 
 # New Doc
 $word=$docx.Documents.Add()
 $docDate = (Get-Date).ToString("yyyyMMdd")
 $docPath = "$env:USERPROFILE\Documents\CIFFC_SPU_${docDate}_WK234.docx"
 
-# ----- Functions -------
+# Insert page numbers in the footer (right-aligned)
+$footer = $word.Sections.Item(1).Footers.Item(1)
+$footerRange = $footer.Range
+$footerRange.Text = "" # Clear any existing text
+$footerRange.ParagraphFormat.Alignment = 2 # 2 = wdAlignParagraphRight
+# 33 = wdFieldPage
+$footerRange.Fields.Add($footerRange, 33) | Out-Null
+
+# ----- Functions ----------------------------------------------------
 
 # Add a heading
 function Add-Heading {
@@ -81,14 +98,15 @@ function Add-Table {
     $range.InsertParagraphAfter()
 }
 
-# Add and resize image from web
+# Add and resize image from web. Add a captoion that includes the source URL and retrieval date.
 function Add-Image {
     param (
         [string]$url,
         [string]$ref,
-        [string]$caption = "",
+        [string]$caption = "I forgot to insert a caption. Please edit me.",
         [int]$width = 300,
-        [int]$height = 200
+        [int]$height = 200,
+        [double]$cropBottomPercent = 0 # 0-1, e.g. 0.15 for 15% crop from bottom
     )
     # download temp file
     $tempImage = Join-Path $env:TEMP ("\image_" + [guid]::NewGuid().ToString() + ".png" )
@@ -101,16 +119,21 @@ function Add-Image {
 
     $range = $word.Content
     $range.Collapse(0)
-    $shape = $range.InlineShapes.AddPicture($tempImage) 
+    $shape = $range.InlineShapes.AddPicture($tempImage)
     $shape.LockAspectRatio = $true
     $shape.Width = $width
     $shape.Height = $height
-    if ($caption -ne "") {
-        $range.InsertCaption("Figure", ". ${caption}", 0, 0)
+    # Crop bottom if requested
+    if ($cropBottomPercent -gt 0 -and $cropBottomPercent -lt 1) {
+        $cropAmount = $shape.Height * $cropBottomPercent
+        $shape.PictureFormat.CropBottom = $cropAmount
     }
-    # Add source URL with retrieval date
-    $sourceText = "Retrieved on $(Get-Date -Format 'yyyy-MM-dd'): $url"
-    $range.InsertAfter("`r$sourceText`r")
+    if ($caption -ne "") {
+        $sourceText = "Retrieved on $(Get-Date -Format 'yyyy-MM-dd'): $url"
+        $fullCaption = "$caption ($sourceText)"
+        $range.Collapse(0)
+        $range.InsertCaption("Figure", ". ${fullCaption}", 0, 0)
+    }
     $range.InsertParagraphAfter()
 }
 
@@ -119,6 +142,8 @@ function getToday {
     return $formattedDate
 }
 
+# Get the next Monday or Sunday date, optionally weeks ahead
+# weeksAhead = 1 for next week, 2 for the week after, etc.
 function getMonday {
     param (
         [int]$weeksAhead = 1
@@ -137,6 +162,8 @@ function getMonday {
     return $targetMonday.ToString("MMMM dd")
 }
 
+# Get the next Sunday date, optionally weeks ahead
+# weeksAhead = 1 for next week, 2 for the week after, etc.
 function getSunday {
     param (
         [int]$weeksAhead = 1
@@ -178,7 +205,21 @@ function ttURL {
     return $baseUrl
 }
 
-# ---- End of functions -----
+# Helper to add hyperlink to a found name
+function Add-InlineMailto {
+    param($doc, $name, $email)
+    $find = $doc.Content.Find
+    $find.Text = $name
+    $find.Forward = $true
+    $find.Wrap = 1 # wdFindContinue
+    if ($find.Execute()) {
+        $foundRange = $find.Parent.Duplicate
+        $doc.Hyperlinks.Add($foundRange, "mailto:$email", $null, $null, $name, $null) | Out-Null
+    }
+}
+
+
+# ---- End of functions ------------------------------------------------------------------
 
 # --- Insert the title info -----
 Add-Heading -text "$(getToday), Week 2/3/4 Significant Fire Weather Outlook"  -font "Arial" -size 18 -center $true -bold $true
@@ -199,7 +240,13 @@ $range.InsertParagraphAfter()
 
 
 $ttWeek2 = ttURL -week 2
-Add-Image -url $ttWeek2 -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
+Add-Image -url $ttWeek2 -width 450 -height 300 -ref "https://www.tropicaltidbits.com/" -caption "Week 2 500 hPa mean forecast from CFSv2. "
+
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+
+Add-Image -url "https://hpfx.science.gc.ca/~lin001/forecastsMon/combine-2.jpeg" -width 650 -height 600 -ref "https://hpfx.science.gc.ca" -caption "GEPS Week 2 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
 
 Add-Table -rows 10 -cols 3 -caption "Week 2 risk summary" -cellContents @{
     "1,1" = "Geographic area"
@@ -222,6 +269,10 @@ Add-Table -rows 10 -cols 3 -caption "Week 2 risk summary" -cellContents @{
 $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
+Add-Heading -text "Week 2 trends:" -font "Arial" -size 11 -center $false -bold $false
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
 
 # ----- Week 3 headings, tables and images -----------
 $range = $word.Content
@@ -234,7 +285,9 @@ $range.Collapse(0)
 $range.InsertParagraphAfter()
 
 $ttWeek3 = ttURL -week 3
-Add-Image -url $ttWeek3 -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
+Add-Image -url $ttWeek3 -width 450 -height 300 -ref "https://www.tropicaltidbits.com/" -caption "Week 3 500 hPa mean forecast from CFSv2. "
+
+Add-Image -url "https://hpfx.science.gc.ca/~lin001/forecastsMon/combine-3.jpeg" -width 650 -height 600 -ref "https://hpfx.science.gc.ca" -caption "GEPS Week 3 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
 
 Add-Table -rows 10 -cols 3 -caption "Week 3 risk summary" -cellContents @{
     "1,1" = "Geographic area"
@@ -254,6 +307,14 @@ Add-Table -rows 10 -cols 3 -caption "Week 3 risk summary" -cellContents @{
     "1,3" = 255 # Red
 }
 
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+Add-Heading -text "Week 3 trends:" -font "Arial" -size 11 -center $false -bold $false
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+
 # ----- Week 4 headings, tables and images -----------
 $range = $word.Content
 $range.Collapse(0)
@@ -265,7 +326,9 @@ $range.Collapse(0)
 $range.InsertParagraphAfter()
 
 $ttWeek4 = ttURL -week 4
-Add-Image -url $ttWeek4 -width 450 -height 300 -ref="https://www.tropicaltidbits.com/"
+Add-Image -url $ttWeek4 -width 450 -height 300 -ref "https://www.tropicaltidbits.com/" -caption "Week 4 500 hPa mean forecast from CFSv2. "
+
+Add-Image -url "https://hpfx.science.gc.ca/~lin001/forecastsMon/combine-4.jpeg" -width 650 -height 600 -ref "https://hpfx.science.gc.ca" -caption "GEPS Week 4 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
 
 Add-Table -rows 10 -cols 3 -caption "Week 4 risk summary" -cellContents @{
     "1,1" = "Geographic area"
@@ -292,6 +355,23 @@ Add-Heading -text "Week 2-4 Summary: $(getMonday -weeksahead 1) - $(getSunday -w
 Add-Heading -text "<placeholder text here>" -font "Arial" -size 11 -center $false -bold $false
 
 
+# Add contact info as plain text, then convert names to hyperlinks using Find
+$range = $word.Content
+$range.Collapse(0)
+$contactLine = "If you have any questions about the forecast, interpretations or terminology please contact one or all of the WIPS weather team: Richard Carr, Liam Buchart or Mike Smith."
+$range.Text = $contactLine
+$range.Font.Name = "Arial"
+$range.Font.Size = 11
+$range.Font.Bold = $false
+$range.ParagraphFormat.Alignment = 0
+$range.InsertParagraphAfter()
+
+
+# Add hyperlinks for each name
+Add-InlineMailto $word "Richard Carr" "richard.carr@nrcan-rnca.gc.ca"
+Add-InlineMailto $word "Liam Buchart" "liam.buchart@nrcan-rnca.gc.ca"
+Add-InlineMailto $word "Mike Smith" "michael.smith2@nrcan-rnca.gc.ca"
+
 # disclaimer
 $range = $word.Content
 $range.Collapse(0)
@@ -300,6 +380,7 @@ Add-Heading -text "Disclaimer: " -font "Arial" -size 11 -center $false -bold $tr
 Add-Heading -text "This document is intended for internal use by CIFFC and its partners. This outlook is updated once per week and amendments are not issued. It provides a high-level outlook of significant fire weather conditions for the next 2-4 weeks based on the latest forecast model data. The information is subject to change as new data becomes available and should not be used for operational decision-making. The focus of this outlook is on meteorological conditions pertinent to wildfire behavior, and other potentially high-impact weather is not considered or included." -font "Arial" -size 11 -center $false -bold $false
 
 $word.SaveAs([ref]$docPath)
+# Uncomment the 2 lines below if you want to close the document after it's created and saved.
 <# $word.Close()
 $docx.Quit() #>
 
