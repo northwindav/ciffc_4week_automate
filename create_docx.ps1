@@ -108,6 +108,9 @@ function Add-Image {
     if ($caption -ne "") {
         $range.InsertCaption("Figure", ". ${caption}", 0, 0)
     }
+    # Add source URL with retrieval date
+    $sourceText = "Retrieved on $(Get-Date -Format 'yyyy-MM-dd'): $url"
+    $range.InsertAfter("`r$sourceText`r")
     $range.InsertParagraphAfter()
 }
 
