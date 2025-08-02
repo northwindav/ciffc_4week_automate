@@ -5,7 +5,7 @@
 # Usage:
 # 1. A VPN connection is required to grab Lin's images. There's a helpful popup dialog box to remind you, and it can be commented out if you find it annoying.
 # 2. Save this script locally and run it. No admin permissions are required.
-# 3. The script will create a Word document in your Documents folder with the name CIFFC_SPU_<date>_WK234.docx
+# 3. The script will create a Word document in your local (not OneDrive) Documents folder with the name CIFFC_SPU_<date>_WK234.docx
 # 4. It's possible to have most of this run the in background, but you'll still need to add a classification before it's saved.
 
 # To do:
