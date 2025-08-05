@@ -2,17 +2,11 @@
 # Script to retrieve images and populate a Word doc as a starting point for the 2-4 week outlook
 # Smith july 2025
 
-# Usage:
+# Usage (Tested on Windows 11 with Office 365):
 # 1. A VPN connection is required to grab Lin's images. There's a helpful popup dialog box to remind you, and it can be commented out if you find it annoying.
 # 2. Save this script locally and run it. No admin permissions are required.
 # 3. The script will create a Word document in your local (not OneDrive) Documents folder with the name CIFFC_SPU_<date>_WK234.docx
 # 4. It's possible to have most of this run the in background, but you'll still need to add a classification before it's saved.
-
-# To do:
-# 1. Add a caption to the image function, and insert proper captions including source URL
-# 2. Add the remaining commonly used images.
-# 3. Add a disclamer at the end of the document including intended audience, issue frequency and limitations.
-
 
 # Show dialog box for VPN requirement. Add a block comment if you find this annoying.
 [void][System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
