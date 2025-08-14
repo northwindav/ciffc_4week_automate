@@ -381,6 +381,10 @@ Add-Image -url $ttWeek3 -width 450 -height 300 -ref "https://www.tropicaltidbits
 
 Add-Image -url "https://hpfx.science.gc.ca/~lin001/forecastsMon/combine-3.jpeg" -width 650 -height 600 -ref "https://hpfx.science.gc.ca" -caption "GEPS Week 3 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
 
+# Line break is required before inserting the table, otherwise the italic case carries through from the previous image insertion.
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
 Add-Table -rows 10 -cols 3 -caption "Week 3 risk summary" -cellContents @{
     "1,1" = "Geographic area"
     "1,2" = "Precipitation"
@@ -398,6 +402,15 @@ Add-Table -rows 10 -cols 3 -caption "Week 3 risk summary" -cellContents @{
     "1,2" = 0xFFA500 # Orange
     "1,3" = 255 # Red
 }
+
+# Leave a space and prompt for the week 3 annotated map
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+Add-Heading -text "<Insert week 3 annotated map of Canada here>" -font "Arial" -size 11 -center $false -bold $false
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
 
 $range = $word.Content
 $range.Collapse(0)
@@ -422,6 +435,10 @@ Add-Image -url $ttWeek4 -width 450 -height 300 -ref "https://www.tropicaltidbits
 
 Add-Image -url "https://hpfx.science.gc.ca/~lin001/forecastsMon/combine-4.jpeg" -width 650 -height 600 -ref "https://hpfx.science.gc.ca" -caption "GEPS Week 4 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
 
+# Line break is required before inserting the table, otherwise the italic case carries through from the previous image insertion.
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
 Add-Table -rows 10 -cols 3 -caption "Week 4 risk summary" -cellContents @{
     "1,1" = "Geographic area"
     "1,2" = "Precipitation"
@@ -439,13 +456,26 @@ Add-Table -rows 10 -cols 3 -caption "Week 4 risk summary" -cellContents @{
     "1,2" = 0xFFA500 # Orange
     "1,3" = 255 # Red
 }
+
+# Leave a space and prompt for the week 4 annotated map
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+Add-Heading -text "<Insert week 4 annotated map of Canada here>" -font "Arial" -size 11 -center $false -bold $false
+$range = $word.Content
+$range.Collapse(0)
+$range.InsertParagraphAfter()
+
 # -----Summary text for all 3 weeks -----------
 $range = $word.Content
 $range.Collapse(0)
 Add-Heading -text "Week 2-4 Summary: $(getMonday -weeksahead 1) - $(getSunday -weeksAhead 4): " -font "Arial" -size 11 -center $false -bold $true
-Add-Heading -text "<placeholder text here>" -font "Arial" -size 11 -center $false -bold $false 
 Add-Heading -text "<text here>" -font "Arial" -size 11 -center $false -bold $false 
 
+# Signature
+Add-Heading -text "<Signature goes here. Name>. Issued <Time MT> $(Get-Date -Format 'MMMM dd yyyy')" -font "Arial" -size 11 -center $false -bold $false 
+$range.Collapse(0)
+$range.InsertParagraphAfter()
 
 # Add contact info as plain text, then convert names to hyperlinks using Find
 $range = $word.Content
