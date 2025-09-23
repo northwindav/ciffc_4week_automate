@@ -1,10 +1,11 @@
 This script formats a Word document used to issue the week 2-4 strategic planning document (SPU). A standard set of images, headings and tables is added along with a contact section and disclaimers.
 
 Requirements: 
-1. A system capable of executing powershell scripts
-2. An internet connection
-3. A VPN connection that allows access to https://hpfx.science.gc.ca
-4. Local Admin privileges are *not* required
+1. Windows and Word: This script makes extensive use of the Word Object Model. 
+2. A system capable of executing PowerShell scripts
+3. An internet connection
+4. Access to https://hpfx.science.gc.ca. This is only required for some of the images
+5. Local Admin privileges are *not* required
 
 Usage and output:
 1. Save the script locally
