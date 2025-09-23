@@ -4,7 +4,7 @@ Requirements:
 1. Windows and Word: This script makes extensive use of the Word Object Model. 
 2. A system capable of executing PowerShell scripts
 3. An internet connection
-4. Access to https://hpfx.science.gc.ca. This is only required for some of the images
+4. Access to https://hpfx.science.gc.ca. This is only required for some of the images.
 5. Local Admin privileges are *not* required
 
 Usage and output:
