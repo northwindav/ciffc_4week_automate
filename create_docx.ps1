@@ -321,11 +321,11 @@ $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
 
-# CWFIS BUI and HFI for the end of week 2. Need the URLs, the current year and the date of the final day of week 2 in order to retrieve the images
-$nextSunday = (getSunday -weeksAhead 2 -format "yyyyMMdd")
-$thisYear = (Get-Date).ToString("yyyy")
-$url1="https://cwfis.cfs.nrcan.gc.ca/data/maps/fwi_fbp/${thisYear}/xf/bui${nextSunday}.png"
-$url2="https://cwfis.cfs.nrcan.gc.ca/data/maps/fwi_fbp/${thisYear}/xf/hfi${nextSunday}.png"
+# CWFIS BUI and HFI : FTP download no longer supported as of 2026 so we need to use WMS:
+# New URL format: https://api.cwfif.nrcan.gc.ca/static-maps/static_maps?source_url_key=legacy_wms&opacity=0.1&show_north_arrow=false&layers=public:bui&language=en&date=<YYYY-MM-DD>&styles=public:cffdrs_bui_cbf
+$nextSunday = (getSunday -weeksAhead 2 -format "yyyy-MM-dd")
+$url1="https://api.cwfif.nrcan.gc.ca/static-maps/static_maps?source_url_key=legacy_wms&opacity=0.6&show_north_arrow=false&layers=public:bui&language=en&date=${nextSunday}&styles=public:cffdrs_bui_cbf"
+$url2="https://api.cwfif.nrcan.gc.ca/static-maps/static_maps?source_url_key=legacy_wms&opacity=0.6&show_north_arrow=false&layers=public:hfi&language=en&date=${nextSunday}&styles=public:cffdrs_hfi_cbf"
 
 Add-ImagesSideBySide -width 250 -height 200 -url1 $url1 -ref1 "https://cwfis.cfs.nrcan.gc.ca" -url2 $url2 -ref2 "https://cwfis.cfs.nrcan.gc.ca" -caption "Projected BUI (left) and HFI (right) valid ${nextSunday}. Retrieved $(getToday). Source: CWFIS."
 
