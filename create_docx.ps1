@@ -301,7 +301,8 @@ $range = $word.Content
 $range.Collapse(0)
 $range.InsertParagraphAfter()
 
-Add-Image -url "https://hpfx.science.gc.ca/~lin001/forecastsMon/combine-2.jpeg" -width 650 -height 600 -ref "https://hpfx.science.gc.ca" -caption "GEPS Week 2 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
+# MS July 2026: Changed to collab link since lin wasn't updating regularly
+Add-Image -url "https://collaboration.cmc.ec.gc.ca/cmc/ensemble/monthly/images/anomaly/2026072700_CA_TTPP_combine2.jpeg" -width 650 -height 600 -ref "https://collaboration.cmc.ec.gc.ca" -caption "GEPS Week 2 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
 
 # NAEFS POP over time. The init date can be the current date, but the range depends on the day of the week. There's a hard coded assumption that this will be run on a Tuesday, hence hours will be from hour 168 to hour 312. These as well as the thresholds used can be modifed below as needed.
 $hourStart = 168
@@ -379,7 +380,7 @@ $range.InsertParagraphAfter()
 $ttWeek3 = ttURL -week 3
 Add-Image -url $ttWeek3 -width 450 -height 300 -ref "https://www.tropicaltidbits.com/" -caption "Week 3 500 hPa mean forecast from CFSv2. "
 
-Add-Image -url "https://hpfx.science.gc.ca/~lin001/forecastsMon/combine-3.jpeg" -width 650 -height 600 -ref "https://hpfx.science.gc.ca" -caption "GEPS Week 3 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
+Add-Image -url "https://collaboration.cmc.ec.gc.ca/cmc/ensemble/monthly/images/anomaly/2026072700_CA_TTPP_combine3.jpeg" -width 650 -height 600 -ref "https://collaboration.cmc.ec.gc.ca" -caption "GEPS Week 3 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
 
 # Line break is required before inserting the table, otherwise the italic case carries through from the previous image insertion.
 $range = $word.Content
@@ -433,7 +434,7 @@ $range.InsertParagraphAfter()
 $ttWeek4 = ttURL -week 4
 Add-Image -url $ttWeek4 -width 450 -height 300 -ref "https://www.tropicaltidbits.com/" -caption "Week 4 500 hPa mean forecast from CFSv2. "
 
-Add-Image -url "https://hpfx.science.gc.ca/~lin001/forecastsMon/combine-4.jpeg" -width 650 -height 600 -ref "https://hpfx.science.gc.ca" -caption "GEPS Week 4 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
+Add-Image -url "https://collaboration.cmc.ec.gc.ca/cmc/ensemble/monthly/images/anomaly/2026072700_CA_TTPP_combine4.jpeg" -width 650 -height 600 -ref "https://collaboration.cmc.ec.gc.ca" -caption "GEPS Week 4 2m temperature and precipitation anomalies (top) and probabilities (bottom)." -cropBottomPercent 0.35
 
 # Line break is required before inserting the table, otherwise the italic case carries through from the previous image insertion.
 $range = $word.Content
